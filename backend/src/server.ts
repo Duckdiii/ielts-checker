@@ -6,6 +6,11 @@ import { config } from './config/env';
 
 const PORT = config.port;
 
+// Health check endpoint for cloud platforms (Render, Railway, Cloud Run)
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: Date.now() });
+});
+
 // Serve static assets in production (checking both dist and frontend/dist)
 const possibleDistPaths = [
   path.resolve(process.cwd(), 'frontend', 'dist'),
@@ -40,7 +45,7 @@ app.get('*', (req, res, next) => {
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[VocabMaster AI] Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`[VocabMaster AI] Server is ready and listening on http://0.0.0.0:${PORT}`);
   });
 }
 

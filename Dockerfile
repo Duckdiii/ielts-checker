@@ -12,7 +12,7 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build frontend production bundle
+# Build frontend and backend production bundle
 RUN npm run build
 
 # Runtime Stage
@@ -29,14 +29,10 @@ COPY package*.json ./
 # Install production dependencies only
 RUN npm ci --only=production
 
-# Install tsx globally or as runtime dependency
-RUN npm install -g tsx
-
-# Copy built frontend assets and backend source
+# Copy built frontend assets, compiled backend and html
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/index.html ./index.html
 
 EXPOSE 3000
 
-CMD ["tsx", "backend/src/server.ts"]
+CMD ["node", "dist/server.js"]
