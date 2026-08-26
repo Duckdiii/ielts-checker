@@ -1,19 +1,37 @@
-import { execSync } from 'child_process';
-import esbuild from 'esbuild';
+import { build as viteBuild } from 'vite';
+import * as esbuild from 'esbuild';
+import fs from 'fs';
+import path from 'path';
 
-console.log('[Build] 1/2: Building frontend with Vite...');
-execSync('node ./node_modules/vite/bin/vite.js build', { stdio: 'inherit' });
+async function runBuild() {
+  console.log('🚀 [Build Step 1/2] Compiling Frontend with Vite...');
+  await viteBuild({
+    configFile: path.resolve(process.cwd(), 'vite.config.ts'),
+  });
 
-console.log('[Build] 2/2: Bundling backend server with esbuild...');
-await esbuild.build({
-  entryPoints: ['backend/src/server.ts'],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  outfile: 'dist/server.js',
-  logLevel: 'info',
+  console.log('🚀 [Build Step 2/2] Compiling Backend Server with esbuild...');
+  await esbuild.build({
+    entryPoints: [path.resolve(process.cwd(), 'backend/src/server.ts')],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    packages: 'external',
+    outfile: path.resolve(process.cwd(), 'dist/server.js'),
+    logLevel: 'info',
+  });
+
+  const serverFile = path.resolve(process.cwd(), 'dist/server.js');
+  if (fs.existsSync(serverFile)) {
+    console.log(`✅ [Build] dist/server.js created successfully (${(fs.statSync(serverFile).size / 1024).toFixed(1)} KB)!`);
+  } else {
+    console.error('❌ [Build Error] dist/server.js was not created!');
+    process.exit(1);
+  }
+
+  console.log('🎉 [Build] Full production build completed successfully!');
+}
+
+runBuild().catch((err) => {
+  console.error('❌ Build failed with error:', err);
+  process.exit(1);
 });
-
-console.log('[Build] ✅ Full production build completed successfully in seconds!');
-process.exit(0);
