@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with personalized learning goals, targets, and preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "Full name or nickname" },
+        "photoURL": { "type": "string", "description": "Avatar URL" },
+        "avatarSeed": { "type": "string", "description": "Avatar custom identifier" },
+        "currentBand": { "type": "number", "description": "Current estimated IELTS Band" },
+        "targetBand": { "type": "number", "description": "Target IELTS Band (e.g. 7.0, 7.5, 8.0)" },
+        "targetExamDate": { "type": "string", "description": "Target test date YYYY-MM-DD" },
+        "studyGoal": { "type": "string", "description": "Main goal: study_abroad, immigration, work_career, graduation, general_fluency" },
+        "goalDescription": { "type": "string", "description": "Detailed custom goal description" },
+        "dailyBudgetMinutes": { "type": "number", "description": "Daily study time goal in minutes" },
+        "preferredStudyTime": { "type": "string", "description": "Preferred study time: morning, afternoon, evening, night" },
+        "interestedTopics": { "type": "array", "description": "Selected IELTS topics of high priority" },
+        "prioritySkills": { "type": "array", "description": "Focused learning modules" },
+        "unlockedBadges": { "type": "array", "description": "List of unlocked badge IDs" },
+        "experiencePoints": { "type": "number", "description": "Total user XP" },
+        "level": { "type": "number", "description": "Current user level" },
+        "updatedAt": { "type": "number", "description": "Timestamp of last update" },
+        "createdAt": { "type": "number", "description": "Timestamp of profile creation" }
+      },
+      "required": ["uid", "email", "displayName", "targetBand"]
+    },
+    "VocabBundle": {
+      "title": "VocabBundle",
+      "description": "Consolidated vocabulary words bundle",
+      "type": "object",
+      "properties": {
+        "bundleIndex": { "type": "number", "description": "Index of the bundle" },
+        "words": { "type": "array", "description": "Array of vocab items" },
+        "updatedAt": { "type": "number", "description": "Timestamp of last update" }
+      }
+    },
+    "MetaDocument": {
+      "title": "MetaDocument",
+      "description": "Metadata for sets, progress, or words index",
+      "type": "object",
+      "properties": {
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile with personalized learning goals, targets, and preferences"
+    },
+    "/ielts_word_bundles/{bundleId}": {
+      "schema": "VocabBundle",
+      "description": "Bundled vocabulary items"
+    },
+    "/ielts_meta/{metaId}": {
+      "schema": "MetaDocument",
+      "description": "App metadata and bundles"
+    }
+  }
+}

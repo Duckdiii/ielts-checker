@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profile and personal preferences
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /{allChildren=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // IELTS Vocabulary Bundles
+    match /ielts_word_bundles/{bundleId} {
+      allow read, write: if true;
+    }
+
+    // App Metadata and Sets
+    match /ielts_meta/{metaId} {
+      allow read, write: if true;
+    }
+
+    // Legacy collections fallback
+    match /ielts_words/{wordId} {
+      allow read, write: if true;
+    }
+
+    match /ielts_sets/{setId} {
+      allow read, write: if true;
+    }
+
+    match /ielts_ai_cache/{cacheId} {
+      allow read, write: if true;
+    }
+
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

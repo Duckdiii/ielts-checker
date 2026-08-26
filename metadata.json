@@ -1,0 +1,6 @@
+{
+  "name": "IELTS VocabMaster AI - Ôn Luyện & Phát Triển Từ Vựng IELTS từ PDF",
+  "description": "Nền tảng ôn luyện từ vựng IELTS thông minh: Tự động trích xuất bảng từ vựng từ file PDF, ôn tập đa phương thức (Flashcard SRS, Trắc nghiệm, Chính tả, Ghép họ từ, Điền câu ngữ cảnh), AI gợi ý từ vựng nâng Band và trợ lý luyện Writing/Speaking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
