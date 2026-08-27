@@ -62,17 +62,19 @@ export function ModernDashboard({
   onToggleBookmark,
   onToggleUnlearned,
 }: ModernDashboardProps) {
-  // Extract active set words
-  const isAllLibrary = activeSet.id === 'all-words-library' || activeSet.id === 'all-words';
+  // Extract active set words safely
+  const safeActiveSet = activeSet || { id: 'all-words-library', title: 'Kho Từ Vựng IELTS' };
+  const safeWords = Array.isArray(words) ? words : [];
+  const isAllLibrary = !safeActiveSet.id || safeActiveSet.id === 'all-words-library' || safeActiveSet.id === 'all-words';
   const setWords = useMemo(() => {
-    if (isAllLibrary) return words;
-    return words.filter((w) => w.sourceSetId === activeSet.id);
-  }, [isAllLibrary, words, activeSet.id]);
+    if (isAllLibrary) return safeWords;
+    return safeWords.filter((w) => w.sourceSetId === safeActiveSet.id);
+  }, [isAllLibrary, safeWords, safeActiveSet.id]);
 
   // FSRS calculations
   const now = Date.now();
   const dueWords = useMemo(() => {
-    return setWords.filter((w) => w.nextReviewDate <= now || w.mastery === 'new');
+    return setWords.filter((w) => (w.nextReviewDate && w.nextReviewDate <= now) || w.mastery === 'new');
   }, [setWords, now]);
 
   const masteredCount = useMemo(() => {
@@ -85,18 +87,18 @@ export function ModernDashboard({
 
   // Word of the Day (Deterministic rotation based on day of year)
   const wordOfTheDay = useMemo(() => {
-    if (words.length === 0) return null;
+    if (safeWords.length === 0) return null;
     const dayOfYear = Math.floor(now / (1000 * 60 * 60 * 24));
-    const advancedWords = words.filter((w) => w.targetIeltsBand && parseFloat(w.targetIeltsBand) >= 7.5);
-    const pool = advancedWords.length > 0 ? advancedWords : words;
+    const advancedWords = safeWords.filter((w) => w.targetIeltsBand && parseFloat(w.targetIeltsBand) >= 7.5);
+    const pool = advancedWords.length > 0 ? advancedWords : safeWords;
     return pool[dayOfYear % pool.length];
-  }, [words, now]);
+  }, [safeWords, now]);
 
   // Weak words needing review
   const weakWords = useMemo(() => {
     return [...setWords]
-      .filter((w) => w.incorrectCount > 0 || w.isUnlearned)
-      .sort((a, b) => b.incorrectCount - a.incorrectCount)
+      .filter((w) => (w.incorrectCount && w.incorrectCount > 0) || w.isUnlearned)
+      .sort((a, b) => (b.incorrectCount || 0) - (a.incorrectCount || 0))
       .slice(0, 4);
   }, [setWords]);
 
