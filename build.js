@@ -28,10 +28,15 @@ async function runBuild() {
     process.exit(1);
   }
 
-  console.log('🎉 [Build] Full production build completed successfully!');
+  console.log('🎉 [Build] Full production build completed successfully! Exiting cleanly with code 0.');
+  process.exit(0);
 }
 
-runBuild().catch((err) => {
-  console.error('❌ Build failed with error:', err);
-  process.exit(1);
-});
+runBuild()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error('❌ Build failed with error:', err);
+    process.exit(1);
+  });
