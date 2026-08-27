@@ -119,7 +119,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClose();
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
-      setErrorMsg('Không thể đăng nhập bằng Google. Vui lòng thử lại hoặc dùng Email.');
+      let message = 'Không thể đăng nhập bằng Google. Vui lòng thử lại hoặc dùng Email.';
+      if (err.code === 'auth/unauthorized-domain') {
+        const currentDomain = typeof window !== 'undefined' ? window.location.hostname : 'domain này';
+        message = `Tên miền "${currentDomain}" chưa được cấp phép (Authorized Domain) trên Firebase Console. Vui lòng thêm "${currentDomain}" vào mục Authentication > Settings > Authorized domains trên Firebase Console hoặc đăng nhập bằng Email/Chế độ Khách.`;
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        message = 'Cửa sổ đăng nhập Google đã bị đóng trước khi hoàn tất.';
+      } else if (err.code === 'auth/popup-blocked') {
+        message = 'Trình duyệt đang chặn cửa sổ Popup. Vui lòng cho phép Pop-up để đăng nhập Google.';
+      } else if (err.code === 'auth/operation-not-allowed') {
+        message = 'Phương thức đăng nhập Google chưa được kích hoạt trên Firebase Console.';
+      } else if (err.message) {
+        message = `Lỗi Google Auth (${err.code || 'error'}): ${err.message}`;
+      }
+      setErrorMsg(message);
       sounds.playWrong();
     } finally {
       setLoading(false);
