@@ -214,7 +214,7 @@ export async function initializeDatabaseForUser(userId: string = 'guest'): Promi
   words: VocabItem[];
   progress?: UserProgress | null;
 }> {
-  // 1. Load from local user-scoped IndexedDB first
+  // 1. Load from local user-scoped IndexedDB and LocalStorage, merging any local words
   const [dbSets, dbWords] = await Promise.all([
     loadSetsFromIndexedDB(userId),
     loadWordsFromIndexedDB(userId),
@@ -224,10 +224,16 @@ export async function initializeDatabaseForUser(userId: string = 'guest'): Promi
   let finalWords = loadStoredWords(userId);
 
   if (dbWords && dbWords.length > 0) {
-    finalWords = dbWords;
+    const wordMap = new Map<string, VocabItem>();
+    finalWords.forEach((w) => wordMap.set(w.id, w));
+    dbWords.forEach((w) => wordMap.set(w.id, w));
+    finalWords = Array.from(wordMap.values());
   }
   if (dbSets && dbSets.length > 0) {
-    finalSets = dbSets;
+    const setMap = new Map<string, WordSet>();
+    finalSets.forEach((s) => setMap.set(s.id, s));
+    dbSets.forEach((s) => setMap.set(s.id, s));
+    finalSets = Array.from(setMap.values());
   }
 
   // 1b. Check if there are uploaded words in Guest mode that should be migrated into this user's account

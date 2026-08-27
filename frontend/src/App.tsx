@@ -138,6 +138,7 @@ const UserProfileModal = React.lazy(() =>
 );
 
 export function App() {
+  const activeLoadedUserIdRef = useRef<string | null>(auth.currentUser?.uid || 'guest');
   const [currentUserId, setCurrentUserId] = useState<string>(() => auth.currentUser?.uid || 'guest');
 
   // Global persistent state (scoped to active user)
@@ -181,7 +182,6 @@ export function App() {
     let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       const targetUid = firebaseUser ? firebaseUser.uid : 'guest';
-      setCurrentUserId(targetUid);
 
       if (firebaseUser) {
         let firestoreProfile = await fetchUserProfileFromFirestore(firebaseUser.uid);
@@ -218,6 +218,10 @@ export function App() {
           setActiveSetId(loadedSets[0].id);
         }
         globalSearchEngine.buildIndex(loadedWords);
+
+        // Mark this user as active & fully loaded before updating currentUserId state
+        activeLoadedUserIdRef.current = targetUid;
+        setCurrentUserId(targetUid);
       }
     });
 
@@ -230,6 +234,9 @@ export function App() {
   // Sync to local storage & IndexedDB scoped by currentUserId
   useEffect(() => {
     if (!sets || sets.length === 0) return;
+    // CRITICAL GUARD: Only save if state matches currentUserId to prevent race condition erasure
+    if (activeLoadedUserIdRef.current !== currentUserId) return;
+
     saveStoredSets(sets, currentUserId);
     if (currentUserId && currentUserId !== 'guest') {
       syncSetsToFirebase(sets, currentUserId).catch(() => {});
@@ -238,6 +245,9 @@ export function App() {
 
   useEffect(() => {
     if (!words || words.length === 0) return;
+    // CRITICAL GUARD: Only save if state matches currentUserId to prevent race condition erasure
+    if (activeLoadedUserIdRef.current !== currentUserId) return;
+
     saveStoredWords(words, currentUserId);
     globalSearchEngine.buildIndex(words);
 
@@ -269,6 +279,8 @@ export function App() {
   }, [words, currentUserId]);
 
   useEffect(() => {
+    if (activeLoadedUserIdRef.current !== currentUserId) return;
+
     saveStoredProgress(progress, currentUserId);
     if (currentUserId && currentUserId !== 'guest') {
       syncProgressToFirebase(progress, currentUserId).catch(() => {});
