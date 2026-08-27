@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
 import { ModernNavbar } from './components/common/ModernNavbar';
 import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { LoadingFallback } from './components/common/LoadingFallback';
