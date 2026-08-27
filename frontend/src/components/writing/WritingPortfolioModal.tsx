@@ -20,35 +20,43 @@ interface WritingPortfolioModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLoadEssay: (essay: WritingPortfolioItem) => void;
+  userId?: string;
 }
-
-const STORAGE_KEY = 'ielts_writing_portfolio_v1';
 
 export function WritingPortfolioModal({
   isOpen,
   onClose,
   onLoadEssay,
+  userId = 'guest',
 }: WritingPortfolioModalProps) {
   const [items, setItems] = useState<WritingPortfolioItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<WritingPortfolioItem | null>(null);
   const [copied, setCopied] = useState(false);
 
+  const storageKey = `ielts_writing_portfolio_v1_${userId}`;
+
   useEffect(() => {
     if (isOpen) {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        let raw = localStorage.getItem(storageKey);
+        if (!raw && userId === 'guest') {
+          raw = localStorage.getItem('ielts_writing_portfolio_v1');
+        }
         if (raw) {
           const parsed = JSON.parse(raw);
           setItems(parsed);
           if (parsed.length > 0) {
             setSelectedItem(parsed[0]);
           }
+        } else {
+          setItems([]);
+          setSelectedItem(null);
         }
       } catch (e) {
         console.error('Failed to load writing portfolio:', e);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, storageKey, userId]);
 
   if (!isOpen) return null;
 

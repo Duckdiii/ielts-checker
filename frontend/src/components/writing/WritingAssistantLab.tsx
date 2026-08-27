@@ -47,16 +47,18 @@ interface WritingAssistantLabProps {
   activeSet: WordSet;
   progress: UserProgress;
   onBack: () => void;
+  currentUserId?: string;
 }
-
-const PORTFOLIO_STORAGE_KEY = 'ielts_writing_portfolio_v1';
 
 export function WritingAssistantLab({
   words,
   activeSet,
   progress,
   onBack,
+  currentUserId = 'guest',
 }: WritingAssistantLabProps) {
+  const PORTFOLIO_STORAGE_KEY = `ielts_writing_portfolio_v1_${currentUserId}`;
+
   // Main view space within writing lab: 'studio' | 'micro-gym' | 'task1-lab'
   const [activeSpace, setActiveSpace] = useState<'studio' | 'micro-gym' | 'task1-lab'>('studio');
 
@@ -748,6 +750,7 @@ export function WritingAssistantLab({
         isOpen={isPortfolioModalOpen}
         onClose={() => setIsPortfolioModalOpen(false)}
         onLoadEssay={handleLoadPortfolioEssay}
+        userId={currentUserId}
       />
     </div>
   );

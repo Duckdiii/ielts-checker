@@ -714,6 +714,7 @@ export function App() {
               activeSet={activeSet}
               progress={progress}
               onBack={() => setActiveTab('dashboard')}
+              currentUserId={currentUserId}
             />
           )}
 

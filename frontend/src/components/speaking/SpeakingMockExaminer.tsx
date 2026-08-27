@@ -75,6 +75,7 @@ interface SpeakingMockExaminerProps {
   onOpenAreaExpander?: (questionText?: string) => void;
   onOpenEmergencyStalling?: () => void;
   onNavigateMode?: (mode: string) => void;
+  currentUserId?: string;
 }
 
 // Curated authentic Cambridge IELTS Speaking question bank
