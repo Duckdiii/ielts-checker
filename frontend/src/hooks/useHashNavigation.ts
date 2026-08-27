@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 
 export type AppViewTab =
   | 'dashboard'
+  | 'vocab-hub'
+  | 'speaking-hub'
   | 'flashcard'
   | 'quiz'
   | 'spelling'
@@ -28,6 +30,8 @@ export type AppViewTab =
 
 const VALID_TABS: Record<string, AppViewTab> = {
   dashboard: 'dashboard',
+  'vocab-hub': 'vocab-hub',
+  'speaking-hub': 'speaking-hub',
   flashcard: 'flashcard',
   quiz: 'quiz',
   spelling: 'spelling',

@@ -73,6 +73,7 @@ export function ModernNavbar({
   // Check which of the 4 core pillars is currently active
   const isStudioActive = currentView === 'dashboard';
   const isVocabLabActive = [
+    'vocab-hub',
     'flashcard',
     'quiz',
     'spelling',
@@ -80,9 +81,11 @@ export function ModernNavbar({
     'cloze',
     'timed-drill',
     'ai-booster',
+    'writing',
     'list',
   ].includes(currentView);
   const isSpeakingActive = [
+    'speaking-hub',
     'speaking',
     'speaking-part2',
     'shadowing',
@@ -142,7 +145,7 @@ export function ModernNavbar({
             </button>
 
             <button
-              onClick={() => onNavigate('flashcard')}
+              onClick={() => onNavigate('vocab-hub')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 isVocabLabActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
@@ -154,7 +157,7 @@ export function ModernNavbar({
             </button>
 
             <button
-              onClick={() => onNavigate('speaking')}
+              onClick={() => onNavigate('speaking-hub')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 isSpeakingActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'

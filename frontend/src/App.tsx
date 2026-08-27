@@ -4,6 +4,8 @@ import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { LoadingFallback } from './components/common/LoadingFallback';
 import { CommandPalette } from './components/common/CommandPalette';
 import { ModernDashboard } from './components/analytics/ModernDashboard';
+import { ModernVocabHub } from './components/study/ModernVocabHub';
+import { ModernSpeakingHub } from './components/speaking/ModernSpeakingHub';
 import { sounds } from './utils/soundEffects';
 import { fireCelebration, fireStreakBonus } from './utils/confetti';
 import { useHashNavigation, AppViewTab } from './hooks/useHashNavigation';
@@ -542,6 +544,29 @@ export function App() {
               onSelectWord={(word) => setSelectedDetailWord(word)}
               onToggleBookmark={handleToggleBookmark}
               onToggleUnlearned={handleToggleUnlearned}
+            />
+          )}
+
+          {/* 📚 Vocab Lab Hub (7 Modes & Study Suite) */}
+          {activeTab === 'vocab-hub' && (
+            <ModernVocabHub
+              words={activeSetWords.length > 0 ? activeSetWords : words}
+              activeSet={activeSet}
+              allWords={words}
+              progress={progress}
+              onBack={() => setActiveTab('dashboard')}
+              onNavigateMode={(mode) => setActiveTab(mode as AppViewTab)}
+            />
+          )}
+
+          {/* 🎙️ Speaking Hub (10 Modes Suite) */}
+          {activeTab === 'speaking-hub' && (
+            <ModernSpeakingHub
+              words={activeSetWords.length > 0 ? activeSetWords : words}
+              activeSet={activeSet}
+              progress={progress}
+              onBack={() => setActiveTab('dashboard')}
+              onNavigateMode={(mode) => setActiveTab(mode as AppViewTab)}
             />
           )}
 
