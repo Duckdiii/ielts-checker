@@ -30,6 +30,11 @@ import {
   DEFAULT_ANONYMOUS_PROFILE,
   syncUserProfileToFirestore,
 } from './utils/firebaseAuth';
+import {
+  syncWordsToFirebase,
+  syncSetsToFirebase,
+  syncProgressToFirebase,
+} from './utils/firebaseSync';
 import { globalSearchEngine } from './utils/searchIndex';
 import { calculateUnlockedBadges } from './utils/achievementBadges';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -226,12 +231,19 @@ export function App() {
   useEffect(() => {
     if (!sets || sets.length === 0) return;
     saveStoredSets(sets, currentUserId);
+    if (currentUserId && currentUserId !== 'guest') {
+      syncSetsToFirebase(sets, currentUserId).catch(() => {});
+    }
   }, [sets, currentUserId]);
 
   useEffect(() => {
     if (!words || words.length === 0) return;
     saveStoredWords(words, currentUserId);
     globalSearchEngine.buildIndex(words);
+
+    if (currentUserId && currentUserId !== 'guest') {
+      syncWordsToFirebase(words, currentUserId).catch(() => {});
+    }
 
     // Recalculate Band
     const band = estimateIeltsBand(words);
@@ -258,6 +270,9 @@ export function App() {
 
   useEffect(() => {
     saveStoredProgress(progress, currentUserId);
+    if (currentUserId && currentUserId !== 'guest') {
+      syncProgressToFirebase(progress, currentUserId).catch(() => {});
+    }
   }, [progress, currentUserId]);
 
   const isAllLibrary = activeSetId === 'all-words-library' || activeSetId === 'all-words';
@@ -358,13 +373,11 @@ export function App() {
       >
     ) => {
       const targetSetId =
-        isAllLibrary || !activeSet?.id || activeSet.id === 'all-words-library'
-          ? sets[0]?.id || 'custom-set'
-          : activeSet.id;
+        isAllLibrary || !activeSet?.id ? sets[0]?.id || 'custom-manual-set' : activeSet.id;
 
-      const newVocab: VocabItem = {
+      const newWord: VocabItem = {
         ...wordData,
-        id: `voc-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        id: `word-manual-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         sourceSetId: targetSetId,
         mastery: 'new',
         srsStage: 0,
@@ -374,45 +387,75 @@ export function App() {
         incorrectCount: 0,
       };
 
-      setWords((prev) => [newVocab, ...prev]);
-
-      setSets((prev) =>
-        prev.map((s) => (s.id === targetSetId ? { ...s, totalWords: s.totalWords + 1 } : s))
-      );
+      setWords((prev) => {
+        const updated = [newWord, ...prev];
+        saveStoredWords(updated, currentUserId);
+        if (currentUserId !== 'guest') syncWordsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
+      setSets((prev) => {
+        const updated = prev.map((s) => (s.id === targetSetId ? { ...s, totalWords: s.totalWords + 1 } : s));
+        saveStoredSets(updated, currentUserId);
+        if (currentUserId !== 'guest') syncSetsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
     },
-    [isAllLibrary, activeSet?.id, sets]
+    [isAllLibrary, activeSet?.id, sets, currentUserId]
   );
 
   // Add PDF or Bulk Set (Single)
   const handleSaveSet = useCallback(
     (newSet: WordSet, newWords: VocabItem[]) => {
-      setSets((prev) => [newSet, ...prev]);
-      setWords((prev) => [...newWords, ...prev]);
+      setSets((prev) => {
+        const updated = [newSet, ...prev];
+        saveStoredSets(updated, currentUserId);
+        if (currentUserId !== 'guest') syncSetsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
+      setWords((prev) => {
+        const updated = [...newWords, ...prev];
+        saveStoredWords(updated, currentUserId);
+        if (currentUserId !== 'guest') syncWordsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
       setActiveSetId(newSet.id);
       setActiveTab('dashboard');
     },
-    [setActiveTab]
+    [setActiveTab, currentUserId]
   );
 
   // Import from Excel or CSV handler
   const handleImportExcelComplete = useCallback(
     (newWords: VocabItem[], newSet?: WordSet) => {
       if (newSet) {
-        setSets((prev) => [newSet, ...prev]);
+        setSets((prev) => {
+          const updated = [newSet, ...prev];
+          saveStoredSets(updated, currentUserId);
+          if (currentUserId !== 'guest') syncSetsToFirebase(updated, currentUserId).catch(() => {});
+          return updated;
+        });
         setActiveSetId(newSet.id);
       } else {
-        setSets((prev) =>
-          prev.map((s) =>
+        setSets((prev) => {
+          const updated = prev.map((s) =>
             s.id === activeSetId ? { ...s, totalWords: s.totalWords + newWords.length } : s
-          )
-        );
+          );
+          saveStoredSets(updated, currentUserId);
+          if (currentUserId !== 'guest') syncSetsToFirebase(updated, currentUserId).catch(() => {});
+          return updated;
+        });
       }
 
-      setWords((prev) => [...newWords, ...prev]);
+      setWords((prev) => {
+        const updated = [...newWords, ...prev];
+        saveStoredWords(updated, currentUserId);
+        if (currentUserId !== 'guest') syncWordsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
       fireCelebration();
       setActiveTab('dashboard');
     },
-    [activeSetId, setActiveTab]
+    [activeSetId, setActiveTab, currentUserId]
   );
 
   // Add Multiple topic-split sets
@@ -420,14 +463,24 @@ export function App() {
     (setsWithWords: Array<{ set: WordSet; words: VocabItem[] }>) => {
       const newSets = setsWithWords.map((item) => item.set);
       const newWords = setsWithWords.flatMap((item) => item.words);
-      setSets((prev) => [...newSets, ...prev]);
-      setWords((prev) => [...newWords, ...prev]);
+      setSets((prev) => {
+        const updated = [...newSets, ...prev];
+        saveStoredSets(updated, currentUserId);
+        if (currentUserId !== 'guest') syncSetsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
+      setWords((prev) => {
+        const updated = [...newWords, ...prev];
+        saveStoredWords(updated, currentUserId);
+        if (currentUserId !== 'guest') syncWordsToFirebase(updated, currentUserId).catch(() => {});
+        return updated;
+      });
       if (newSets[0]) {
         setActiveSetId(newSets[0].id);
       }
       setActiveTab('dashboard');
     },
-    [setActiveTab]
+    [setActiveTab, currentUserId]
   );
 
   // Study session completion handler

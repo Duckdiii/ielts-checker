@@ -16,6 +16,7 @@ import {
   syncWordsToFirebase,
   syncSetsToFirebase,
 } from './firebaseSync';
+import { resolveWordConflicts } from './offlineSync';
 
 const STORAGE_PREFIX = 'ielts_v3_';
 
@@ -229,6 +230,30 @@ export async function initializeDatabaseForUser(userId: string = 'guest'): Promi
     finalSets = dbSets;
   }
 
+  // 1b. Check if there are uploaded words in Guest mode that should be migrated into this user's account
+  if (userId && userId !== 'guest' && !userId.startsWith('guest_')) {
+    try {
+      const guestWords = loadStoredWords('guest');
+      const guestSets = loadStoredSets('guest');
+      const guestCustomSets = guestSets.filter(
+        (s) => s.sourceType !== 'default' || s.id.startsWith('set-')
+      );
+      if (guestCustomSets.length > 0 || guestWords.length > DEFAULT_VOCABULARY.length) {
+        const wordMap = new Map<string, VocabItem>();
+        finalWords.forEach((w) => wordMap.set(w.id, w));
+        guestWords.forEach((w) => wordMap.set(w.id, w));
+        finalWords = Array.from(wordMap.values());
+
+        const setMap = new Map<string, WordSet>();
+        finalSets.forEach((s) => setMap.set(s.id, s));
+        guestSets.forEach((s) => setMap.set(s.id, s));
+        finalSets = Array.from(setMap.values());
+      }
+    } catch (e) {
+      console.warn('Guest migration check skipped', e);
+    }
+  }
+
   // 2. If user is authenticated and not quota exceeded, check their private cloud storage
   let cloudProgress: UserProgress | null = null;
   if (userId && userId !== 'guest' && !userId.startsWith('guest_') && !isFirestoreQuotaExceeded()) {
@@ -239,11 +264,15 @@ export async function initializeDatabaseForUser(userId: string = 'guest'): Promi
         loadProgressFromFirebase(userId),
       ]);
 
+      // CRITICAL: MERGE cloud words and local words (never blindly overwrite and wipe local uploads)
       if (cloudWords && cloudWords.length > 0) {
-        finalWords = cloudWords;
+        finalWords = resolveWordConflicts(finalWords, cloudWords);
       }
       if (cloudSets && cloudSets.length > 0) {
-        finalSets = cloudSets;
+        const setMap = new Map<string, WordSet>();
+        cloudSets.forEach((s) => setMap.set(s.id, s));
+        finalSets.forEach((s) => setMap.set(s.id, s));
+        finalSets = Array.from(setMap.values());
       }
       if (cloudProg) {
         cloudProgress = cloudProg;
@@ -263,6 +292,12 @@ export async function initializeDatabaseForUser(userId: string = 'guest'): Promi
   // Keep in sync locally in IndexedDB & LocalStorage
   saveStoredSets(finalSets, userId);
   saveStoredWords(finalWords, userId);
+
+  // Auto-sync to Firebase if authenticated so cloud is immediately up-to-date
+  if (userId && userId !== 'guest' && !userId.startsWith('guest_') && !isFirestoreQuotaExceeded()) {
+    syncWordsToFirebase(finalWords, userId).catch(() => {});
+    syncSetsToFirebase(finalSets, userId).catch(() => {});
+  }
 
   return { sets: finalSets, words: finalWords, progress: cloudProgress };
 }
