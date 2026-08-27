@@ -825,3 +825,96 @@ export async function generateWritingPrompt(payload: {
   return json.data;
 }
 
+/**
+ * 🧠 Generate 4-Paragraph Outline (AI Essay Architect)
+ */
+export async function generateEssayOutline(payload: {
+  taskType: string;
+  topic: string;
+  promptQuestion: string;
+  userStance?: string;
+  targetWords?: string[];
+}): Promise<any> {
+  const res = await fetch('/api/writing/outline', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Lỗi khi tạo dàn ý bài viết (${res.status})`);
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+/**
+ * ⚡ Inline Sentence Surgery (Upgrade Highlighted Phrase)
+ */
+export async function upgradeWritingSentence(payload: {
+  selectedText: string;
+  contextSentence?: string;
+  targetMode?: 'lexical_band8' | 'complex_grammar' | 'concise_academic' | 'all';
+}): Promise<any> {
+  const res = await fetch('/api/writing/upgrade-sentence', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Lỗi khi nâng cấp câu (${res.status})`);
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+/**
+ * 🏋️ Micro-Writing Gym Evaluator (Intro, PEEL Body, Overview)
+ */
+export async function evaluateMicroWriting(payload: {
+  drillType: 'intro_2min' | 'body_peel_5min' | 'task1_overview_3min';
+  promptQuestion: string;
+  submissionText: string;
+}): Promise<any> {
+  const res = await fetch('/api/writing/micro-eval', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Lỗi khi chấm bài viết cấp tốc (${res.status})`);
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+/**
+ * 🔗 Cohesion & Linking Words Radar
+ */
+export async function analyzeWritingCohesion(payload: {
+  essayText: string;
+}): Promise<any> {
+  const res = await fetch('/api/writing/cohesion-radar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Lỗi khi phân tích liên kết đoạn (${res.status})`);
+  }
+
+  const json = await res.json();
+  return json.data;
+}
+
+

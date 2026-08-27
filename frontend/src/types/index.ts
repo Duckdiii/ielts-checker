@@ -983,5 +983,108 @@ export interface WritingPrompt {
   }>;
 }
 
+export interface EssayOutline {
+  thesisStatement: string;
+  thesisStatementVi: string;
+  introduction: {
+    hookVi: string;
+    paraphraseEn: string;
+    thesisEn: string;
+  };
+  body1: {
+    topicSentenceEn: string;
+    topicSentenceVi: string;
+    explanationVi: string;
+    exampleEn: string;
+    exampleVi?: string;
+    recommendedKeywords: string[];
+  };
+  body2: {
+    topicSentenceEn: string;
+    topicSentenceVi: string;
+    explanationVi: string;
+    exampleEn: string;
+    exampleVi?: string;
+    recommendedKeywords: string[];
+  };
+  conclusion: {
+    summaryEn: string;
+    summaryVi: string;
+    finalThoughtVi: string;
+  };
+  suggestedCollocations: Array<{
+    phrase: string;
+    meaningVi: string;
+    applicableSection: string;
+  }>;
+}
+
+export interface SentenceUpgradeResult {
+  originalText: string;
+  lexicalVariation: {
+    text: string;
+    cefrLevel: string;
+    explanationVi: string;
+    keyCollocations: string[];
+  };
+  grammarVariation: {
+    text: string;
+    structureType: string;
+    explanationVi: string;
+  };
+  conciseVariation: {
+    text: string;
+    explanationVi: string;
+  };
+}
+
+export interface MicroWritingDrillResult {
+  drillType: 'intro_2min' | 'body_peel_5min' | 'task1_overview_3min';
+  score: number;
+  wordCount: number;
+  feedbackVi: string;
+  criteriaChecks: Array<{
+    criterion: string;
+    passed: boolean;
+    commentVi: string;
+  }>;
+  upgradedVersion: string;
+}
+
+export interface CohesionAnalysisResult {
+  cohesionBandScore: number;
+  overusedTransitions: Array<{
+    word: string;
+    count: number;
+    naturalAlternatives: string[];
+  }>;
+  mechanicalLinkingWarning: string;
+  flowAnalysisVi: string;
+  recommendedDiscourseMarkers: Array<{
+    phrase: string;
+    purpose: string;
+    exampleUsage: string;
+  }>;
+}
+
+export interface WritingPortfolioItem {
+  id: string;
+  createdAt: number;
+  taskType: IeltsWritingTaskType;
+  topic: string;
+  promptQuestion: string;
+  essayText: string;
+  wordCount: number;
+  overallBand: number;
+  criteriaScores: {
+    taskResponse: number;
+    coherenceCohesion: number;
+    lexicalResource: number;
+    grammaticalRange: number;
+  };
+  modelRewrite?: string;
+}
+
+
 
 
