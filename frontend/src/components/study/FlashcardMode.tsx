@@ -380,12 +380,13 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
       />
 
       {/* Top Controls Bar */}
-      <div className="bg-[#16191D] p-3 sm:p-4 rounded-2xl border border-[#2D3135] flex items-center justify-between shadow-lg flex-wrap gap-2.5">
+      <div className="neo-glass-panel p-3.5 sm:p-4 rounded-2xl border border-white/10 flex items-center justify-between shadow-2xl flex-wrap gap-2.5">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors cursor-pointer px-3 py-1.5 rounded-xl hover:bg-[#21262D]"
+          className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition-colors cursor-pointer px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5"
         >
-          <ArrowLeft className="w-4 h-4" /> Quay lại Bảng điều khiển
+          <ArrowLeft className="w-4 h-4 text-indigo-400" />
+          <span>Về Studio</span>
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -416,7 +417,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                 showSidebars
                   ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/40 hover:bg-indigo-600/30'
-                  : 'bg-[#21262D] text-slate-400 border-[#30363D] hover:text-white'
+                  : 'bg-white/5 text-slate-300 border-white/10 hover:text-white'
               }`}
               title="Bật / Tắt 2 cột thông tin bên cạnh"
             >
@@ -433,29 +434,29 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
               isZenMode
-                ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
-                : 'bg-[#21262D] text-slate-300 border-[#30363D] hover:text-white hover:border-indigo-500/50'
+                ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/40'
+                : 'bg-white/5 text-slate-200 border-white/10 hover:text-white hover:border-indigo-500/40'
             }`}
             title="Chế độ toàn màn hình không xao nhãng (Phím Z)"
           >
             {isZenMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{isZenMode ? 'Thoát Zen' : 'Zen Focus'}</span>
-            <span className="text-[10px] font-mono px-1 py-0.2 rounded bg-black/30 border border-white/10 hidden sm:inline">
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-black/40 border border-white/10 hidden sm:inline text-indigo-300">
               Z
             </span>
           </button>
 
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 cursor-pointer hover:text-white px-2 py-1 rounded-lg hover:bg-[#21262D]">
+          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 cursor-pointer hover:text-white px-2 py-1 rounded-lg hover:bg-white/5">
             <input
               type="checkbox"
               checked={autoSpeak}
               onChange={(e) => setAutoSpeak(e.target.checked)}
-              className="rounded bg-[#21262D] border-[#30363D] text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+              className="rounded bg-white/10 border-white/20 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
             />
             <span className="hidden sm:inline">Tự phát âm</span>
           </label>
 
-          <span className="text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm font-mono">
+          <span className="text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm font-mono">
             <span>{currentIndex + 1} / {queue.length}</span>
             <span className="text-xs text-indigo-400">({progressPercent}%)</span>
           </span>
@@ -474,115 +475,101 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
         {showSidebars && !isZenMode && (
           <aside className="lg:col-span-3 space-y-4 animate-fadeIn">
             {/* Live Session Stats Box */}
-            <div className="bg-[#16191D] p-4 rounded-2xl border border-[#2D3135] shadow-lg space-y-3">
-              <div className="flex items-center justify-between border-b border-[#2D3135] pb-2.5">
-                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="neo-glass-card p-4 rounded-2xl border border-white/10 shadow-xl space-y-3">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+                <span className="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
                   <Flame className="w-4 h-4 text-amber-400" />
                   <span>Tiến trình phiên học</span>
                 </span>
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  {accuracyPercent}% chuẩn xác
+                <span className="text-[11px] font-black text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                  {accuracyPercent}% chuẩn
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="p-2.5 bg-[#21262D] rounded-xl border border-[#30363D]">
-                  <span className="text-[10px] text-slate-400 block">Đã ôn</span>
+                <div className="p-2.5 bg-white/[0.03] rounded-xl border border-white/5">
+                  <span className="text-[10px] text-slate-400 block font-semibold">Đã ôn</span>
                   <span className="text-base font-black text-indigo-300">{reviewedCount}</span>
                 </div>
-                <div className="p-2.5 bg-[#21262D] rounded-xl border border-[#30363D]">
-                  <span className="text-[10px] text-slate-400 block">Nhớ tốt</span>
+                <div className="p-2.5 bg-white/[0.03] rounded-xl border border-white/5">
+                  <span className="text-[10px] text-slate-400 block font-semibold">Nhớ tốt</span>
                   <span className="text-base font-black text-emerald-400">{correctCount}</span>
                 </div>
-                <div className="p-2.5 bg-[#21262D] rounded-xl border border-[#30363D]">
-                  <span className="text-[10px] text-slate-400 block">Còn lại</span>
+                <div className="p-2.5 bg-white/[0.03] rounded-xl border border-white/5">
+                  <span className="text-[10px] text-slate-400 block font-semibold">Còn lại</span>
                   <span className="text-base font-black text-amber-300">{Math.max(0, queue.length - currentIndex - 1)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Session Queue Word List Navigator */}
-            <div className="bg-[#16191D] p-4 rounded-2xl border border-[#2D3135] shadow-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+            {/* Smart Study Queue Preview List */}
+            <div className="neo-glass-card p-4 rounded-2xl border border-white/10 shadow-xl space-y-2.5">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                <span className="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
                   <ListOrdered className="w-4 h-4 text-indigo-400" />
-                  <span>Hàng đợi thẻ ({queue.length})</span>
-                </h3>
-                <span className="text-[11px] text-slate-400">Chạm để nhảy từ</span>
+                  <span>Hàng đợi thông minh</span>
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">{queue.length} thẻ</span>
               </div>
 
-              <div className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
-                {queue.map((item, idx) => {
-                  const isCurrent = idx === currentIndex;
-                  const isPast = idx < currentIndex;
+              <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                {queue.slice(Math.max(0, currentIndex - 2), currentIndex + 8).map((item, idx) => {
+                  const actualIndex = Math.max(0, currentIndex - 2) + idx;
+                  const isCurrent = actualIndex === currentIndex;
+                  const isPast = actualIndex < currentIndex;
+
                   return (
-                    <button
-                      key={item.word.id + idx}
-                      type="button"
+                    <div
+                      key={item.word.id}
                       onClick={() => {
                         sounds.playClick();
-                        setCurrentIndex(idx);
+                        setCurrentIndex(actualIndex);
                         setIsFlipped(false);
                       }}
-                      className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                      className={`flex items-center justify-between p-2 rounded-xl text-xs transition-all cursor-pointer ${
                         isCurrent
-                          ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md shadow-indigo-950/40 ring-1 ring-indigo-500'
+                          ? 'bg-gradient-to-r from-indigo-600/30 to-purple-600/30 border border-indigo-500/50 text-white font-bold shadow-sm'
                           : isPast
-                          ? 'bg-[#21262D]/60 border-[#30363D]/60 text-slate-400 hover:text-slate-200 hover:bg-[#21262D]'
-                          : 'bg-[#1C2025] border-[#2D3135] text-slate-300 hover:text-white hover:border-indigo-500/40'
+                          ? 'bg-white/[0.02] text-slate-400 border border-transparent'
+                          : 'bg-white/[0.03] text-slate-300 hover:bg-white/[0.06] border border-white/5'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`text-[10px] font-mono font-bold w-5 h-5 rounded flex items-center justify-center shrink-0 ${
-                          isCurrent
-                            ? 'bg-indigo-600 text-white'
-                            : isPast
-                            ? 'bg-emerald-500/20 text-emerald-300'
-                            : 'bg-[#21262D] text-slate-400'
-                        }`}>
-                          {isPast ? <Check className="w-3 h-3" /> : idx + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <p className={`text-xs font-bold truncate ${isCurrent ? 'text-indigo-200' : 'text-slate-200'}`}>
-                            {item.word.term}
-                          </p>
-                          <p className="text-[10px] text-slate-400 truncate">
-                            {item.word.meaning}
-                          </p>
-                        </div>
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="text-[10px] font-mono text-slate-400 w-4">{actualIndex + 1}.</span>
+                        <span className="truncate">{item.word.term}</span>
                       </div>
-
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded border shrink-0 font-bold ${item.tierBadge.bg} ${item.tierBadge.border} ${item.tierBadge.text}`}>
-                        {item.tierBadge.icon}
-                      </span>
-                    </button>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px]">{item.tierBadge.icon}</span>
+                        {isPast && <Check className="w-3 h-3 text-emerald-400" />}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Keyboard Cheatsheet */}
-            <div className="bg-[#16191D] p-4 rounded-2xl border border-[#2D3135] shadow-lg space-y-2.5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-300 uppercase tracking-wider">
-                <Keyboard className="w-4 h-4 text-indigo-400" />
-                <span>Phím tắt học nhanh</span>
+            {/* Keyboard Shortcuts Guide */}
+            <div className="neo-glass-card p-4 rounded-2xl border border-white/10 shadow-xl space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-black text-slate-200 uppercase tracking-wider border-b border-white/5 pb-2">
+                <Keyboard className="w-4 h-4 text-purple-400" />
+                <span>Phím Tắt Siêu Tốc</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#21262D] border border-[#30363D]">
-                  <span className="text-slate-400">Lật thẻ:</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[#16191D] font-mono font-bold text-indigo-300 border border-[#30363D]">Space</kbd>
+              <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span className="text-slate-300 font-medium">Lật thẻ:</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 font-mono font-bold text-indigo-300 border border-white/10">Space</kbd>
                 </div>
-                <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#21262D] border border-[#30363D]">
-                  <span className="text-slate-400">Đánh giá:</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[#16191D] font-mono font-bold text-indigo-300 border border-[#30363D]">1-4</kbd>
+                <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span className="text-slate-300 font-medium">Đánh giá:</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 font-mono font-bold text-emerald-300 border border-white/10">1-4</kbd>
                 </div>
-                <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#21262D] border border-[#30363D]">
-                  <span className="text-slate-400">Gắn sao:</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[#16191D] font-mono font-bold text-amber-300 border border-[#30363D]">S</kbd>
+                <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span className="text-slate-300 font-medium">Phát âm:</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 font-mono font-bold text-cyan-300 border border-white/10">A</kbd>
                 </div>
-                <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#21262D] border border-[#30363D]">
-                  <span className="text-slate-400">Zen Focus:</span>
-                  <kbd className="px-1.5 py-0.5 rounded bg-[#16191D] font-mono font-bold text-cyan-300 border border-[#30363D]">Z</kbd>
+                <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span className="text-slate-300 font-medium">Zen:</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-black/40 font-mono font-bold text-purple-300 border border-white/10">Z</kbd>
                 </div>
               </div>
             </div>
@@ -596,9 +583,9 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
           showSidebars && !isZenMode ? 'lg:col-span-6' : 'w-full'
         }`}>
           {/* Progress Bar */}
-          <div className="w-full h-2.5 bg-[#21262D] rounded-full overflow-hidden border border-[#2D3135] p-0.5">
+          <div className="w-full h-2.5 bg-white/[0.04] rounded-full overflow-hidden border border-white/10 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(99,102,241,0.6)]"
+              className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.7)]"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -609,16 +596,16 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
             className={`relative w-full rounded-3xl cursor-pointer select-none transition-all duration-300 shadow-2xl ${
               isZenMode ? 'min-h-[500px] sm:min-h-[560px]' : 'min-h-[440px] sm:min-h-[480px]'
             }`}
-            style={{ perspective: '1000px' }}
+            style={{ perspective: '1200px' }}
           >
             <div
-              className={`w-full h-full rounded-3xl p-6 sm:p-10 transition-all duration-500 border bg-[#16191D] flex flex-col justify-between relative overflow-hidden ${
+              className={`w-full h-full rounded-3xl p-6 sm:p-10 transition-all duration-500 border flex flex-col justify-between relative overflow-hidden neo-glass-card ${
                 isFlipped
-                  ? 'border-indigo-500/60 shadow-indigo-950/30 bg-gradient-to-b from-[#1C2128] to-[#14161A]'
-                  : 'border-[#30363D] hover:border-indigo-500/60'
+                  ? 'border-indigo-500/60 shadow-[0_0_40px_rgba(99,102,241,0.25)] bg-gradient-to-br from-[#121733]/90 via-[#0A0D1E]/95 to-[#050711]'
+                  : 'border-white/[0.12] hover:border-indigo-500/60 bg-gradient-to-br from-[#0F142A]/80 via-[#0A0D1B]/90 to-[#04060E]'
               }`}
             >
-              <div className="absolute top-0 left-0 w-2 h-full bg-indigo-500" />
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-indigo-500 to-purple-600 shadow-[0_0_12px_rgba(99,102,241,0.6)]" />
 
               {/* Card Top Details */}
               <div className="flex items-center justify-between">
@@ -631,7 +618,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                   </span>
 
                   {currentWord.targetIeltsBand && (
-                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
                       Band {currentWord.targetIeltsBand}
                     </span>
                   )}
@@ -643,10 +630,10 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                     onClick={startPronunciationCheck}
                     className={`p-2.5 rounded-xl transition-all border cursor-pointer ${
                       isPronouncing
-                        ? 'bg-rose-600 text-white animate-pulse ring-2 ring-rose-400 border-rose-500'
+                        ? 'bg-rose-600 text-white animate-pulse ring-2 ring-rose-400 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.6)]'
                         : pronunciationScore?.status === 'perfect'
                         ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                        : 'bg-[#21262D] text-amber-300 hover:text-white hover:bg-amber-600 border-[#30363D]'
+                        : 'bg-white/[0.05] text-amber-300 hover:text-white hover:bg-amber-600 border-white/10'
                     }`}
                     title={isPronouncing ? 'Đang lắng nghe phát âm của bạn...' : 'Luyện phát âm từ này (Bấm Mic)'}
                   >
@@ -658,7 +645,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                       sounds.playClick();
                       speakWord(currentWord.term);
                     }}
-                    className="p-2.5 rounded-xl bg-[#21262D] text-indigo-300 hover:text-white hover:bg-indigo-600 transition-colors border border-[#30363D] cursor-pointer"
+                    className="p-2.5 rounded-xl bg-white/[0.05] text-indigo-300 hover:text-white hover:bg-indigo-600 transition-colors border border-white/10 cursor-pointer"
                     title="Nghe phát âm chuẩn"
                   >
                     <Volume2 className="w-5 h-5" />
@@ -672,7 +659,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                     className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                       currentWord.isUnlearned
                         ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-md shadow-rose-500/20 ring-1 ring-rose-500/40'
-                        : 'bg-[#21262D] text-[#8B949E] border-[#30363D] hover:text-rose-400 hover:bg-rose-500/10'
+                        : 'bg-white/[0.05] text-slate-400 border-white/10 hover:text-rose-400 hover:bg-rose-500/10'
                     }`}
                     title={currentWord.isUnlearned ? 'Đã đánh dấu CHƯA THUỘC (Nhấn để hủy)' : 'Đánh dấu từ này là CHƯA THUỘC'}
                   >
@@ -686,12 +673,12 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                     }}
                     className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
                       currentWord.isBookmarked
-                        ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
-                        : 'bg-[#21262D] text-[#8B949E] border-[#30363D] hover:text-white'
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm'
+                        : 'bg-white/[0.05] text-slate-400 border-white/10 hover:text-white'
                     }`}
                     title="Lưu từ quan trọng (Phím S)"
                   >
-                    <Star className={`w-5 h-5 ${currentWord.isBookmarked ? 'fill-amber-400' : ''}`} />
+                    <Star className={`w-5 h-5 ${currentWord.isBookmarked ? 'fill-amber-400 text-amber-400' : ''}`} />
                   </button>
                 </div>
               </div>
@@ -702,14 +689,14 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                 {(isPronouncing || pronunciationScore) && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className={`p-3.5 rounded-2xl border text-xs sm:text-sm animate-fadeIn max-w-md mx-auto shadow-md ${
+                    className={`p-3.5 rounded-2xl border text-xs sm:text-sm animate-fadeIn max-w-md mx-auto shadow-xl ${
                       isPronouncing
-                        ? 'bg-rose-500/15 border-rose-500/40 text-rose-200'
+                        ? 'bg-rose-500/20 border-rose-500/50 text-rose-200 shadow-[0_0_25px_rgba(244,63,94,0.3)]'
                         : pronunciationScore?.status === 'perfect'
-                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-200'
                         : pronunciationScore?.status === 'good'
-                        ? 'bg-blue-500/15 border-blue-500/40 text-blue-200'
-                        : 'bg-amber-500/15 border-amber-500/40 text-amber-200'
+                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-200'
+                        : 'bg-amber-500/20 border-amber-500/50 text-amber-200'
                     }`}
                   >
                     {isPronouncing ? (
@@ -740,21 +727,21 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                 {!isFlipped ? (
                   // FRONT FACE
                   <div className="space-y-4 animate-fadeIn">
-                    <div className="text-xs sm:text-sm uppercase font-bold tracking-widest text-indigo-400">
+                    <div className="text-xs sm:text-sm uppercase font-black tracking-widest text-indigo-400">
                       Academic Term
                     </div>
-                    <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight drop-shadow-md">
+                    <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight heading-gradient-brand drop-shadow-lg">
                       {currentWord.term}
                     </h1>
                     {currentWord.ipa && (
                       <div>
-                        <span className="text-lg sm:text-2xl text-indigo-300 font-mono font-medium tracking-wide bg-[#21262D]/90 px-4 py-1.5 rounded-2xl border border-indigo-500/30 inline-block shadow-sm">
+                        <span className="text-lg sm:text-2xl text-indigo-300 font-mono font-bold tracking-wide bg-white/[0.05] px-4 py-1.5 rounded-2xl border border-indigo-500/40 inline-block shadow-inner">
                           {currentWord.ipa}
                         </span>
                       </div>
                     )}
                     <div className="pt-6 text-xs sm:text-sm text-slate-300 flex items-center justify-center gap-2">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#21262D] border border-[#30363D] font-mono font-bold text-indigo-300">
+                      <span className="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 font-mono font-bold text-indigo-300 shadow-sm">
                         Space
                       </span>
                       <span>Chạm vào thẻ hoặc bấm phím Space để xem định nghĩa & ví dụ</span>
@@ -763,7 +750,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                 ) : (
                   // BACK FACE
                   <div className="space-y-5 text-left animate-fadeIn">
-                    <div className="p-4 sm:p-5 rounded-2xl bg-[#21262D]/90 border border-indigo-500/30">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-indigo-500/40 shadow-inner">
                       <span className="text-xs sm:text-sm font-bold text-indigo-400 uppercase tracking-wider block mb-1">
                         Định nghĩa tiếng Việt:
                       </span>
@@ -773,7 +760,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                     </div>
 
                     {currentWord.example && (
-                      <div className="p-4 sm:p-5 rounded-2xl bg-[#21262D]/70 border border-[#30363D]">
+                      <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10">
                         <span className="text-xs sm:text-sm font-bold text-indigo-300 block mb-1.5">
                           Ngữ cảnh học thuật (IELTS Context):
                         </span>
@@ -785,7 +772,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       {currentWord.synonyms && (
-                        <div className="p-3.5 rounded-xl bg-[#21262D] border border-emerald-500/30">
+                        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
                           <span className="text-emerald-400 block text-xs font-bold uppercase mb-0.5">
                             Từ đồng nghĩa (Paraphrase):
                           </span>
@@ -793,7 +780,7 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
                         </div>
                       )}
                       {currentWord.wordFamily && (
-                        <div className="p-3.5 rounded-xl bg-[#21262D] border border-amber-500/30">
+                        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
                           <span className="text-amber-400 block text-xs font-bold uppercase mb-0.5">
                             Họ từ (Word Family):
                           </span>
@@ -806,21 +793,21 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
               </div>
 
               {/* Card Bottom / AI Button */}
-              <div className="flex items-center justify-between pt-3 border-t border-[#2D3135]">
+              <div className="flex items-center justify-between pt-3 border-t border-white/10">
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onOpenAiBoosterForWord(currentWord);
                   }}
-                  className="flex items-center gap-2 text-xs sm:text-sm font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/30 px-3.5 py-2 rounded-xl border border-indigo-500/30 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 text-xs sm:text-sm font-bold text-indigo-300 hover:text-white bg-indigo-500/20 hover:bg-indigo-500/30 px-4 py-2 rounded-xl border border-indigo-500/40 transition-all cursor-pointer shadow-sm"
                 >
                   <Sparkles className="w-4 h-4 text-indigo-400" />
                   <span>Phân tích sâu với AI</span>
                 </button>
 
-                <span className="text-xs sm:text-sm text-slate-300">
-                  Giai đoạn SRS: <strong className="text-white font-bold">Lớp {currentWord.srsStage || 0}</strong>
+                <span className="text-xs sm:text-sm text-slate-300 font-medium">
+                  Giai đoạn FSRS: <strong className="text-white font-bold">Lớp {currentWord.srsStage || 0}</strong>
                 </span>
               </div>
             </div>
@@ -832,37 +819,49 @@ export const FlashcardMode: React.FC<FlashcardModeProps> = ({
               <button
                 type="button"
                 onClick={() => handleRating('again')}
-                className="p-3.5 sm:p-4 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border-2 border-rose-500/40 text-rose-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-md"
+                className="p-3.5 sm:p-4 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border-2 border-rose-500/40 hover:border-rose-400 text-rose-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-lg shadow-rose-950/40 hover:shadow-[0_0_25px_rgba(244,63,94,0.3)]"
               >
-                <span className="text-sm sm:text-base font-extrabold">1. Quên hoàn toàn</span>
-                <span className="text-xs text-rose-300 font-mono">&lt; 10 phút</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-rose-500/30 text-rose-300 flex items-center justify-center text-xs font-mono font-bold">1</span>
+                  <span className="text-sm sm:text-base font-black">Quên rồi</span>
+                </div>
+                <span className="text-[11px] text-rose-300 font-mono">&lt; 10 phút</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleRating('hard')}
-                className="p-3.5 sm:p-4 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border-2 border-amber-500/40 text-amber-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-md"
+                className="p-3.5 sm:p-4 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border-2 border-amber-500/40 hover:border-amber-400 text-amber-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-lg shadow-amber-950/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.3)]"
               >
-                <span className="text-sm sm:text-base font-extrabold">2. Khá khó nhớ</span>
-                <span className="text-xs text-amber-300 font-mono">1 ngày</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-amber-500/30 text-amber-300 flex items-center justify-center text-xs font-mono font-bold">2</span>
+                  <span className="text-sm sm:text-base font-black">Khá khó</span>
+                </div>
+                <span className="text-[11px] text-amber-300 font-mono">1 ngày</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleRating('good')}
-                className="p-3.5 sm:p-4 rounded-2xl bg-indigo-500/15 hover:bg-indigo-500/25 border-2 border-indigo-500/40 text-indigo-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-md"
+                className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border-2 border-emerald-500/40 hover:border-emerald-400 text-emerald-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-lg shadow-emerald-950/40 hover:shadow-[0_0_25px_rgba(16,185,129,0.3)]"
               >
-                <span className="text-sm sm:text-base font-extrabold">3. Nhớ tốt</span>
-                <span className="text-xs text-indigo-300 font-mono">3 ngày</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/30 text-emerald-300 flex items-center justify-center text-xs font-mono font-bold">3</span>
+                  <span className="text-sm sm:text-base font-black">Nhớ tốt</span>
+                </div>
+                <span className="text-[11px] text-emerald-300 font-mono">3 ngày</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleRating('easy')}
-                className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border-2 border-emerald-500/40 text-emerald-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-md"
+                className="p-3.5 sm:p-4 rounded-2xl bg-cyan-500/15 hover:bg-cyan-500/25 border-2 border-cyan-500/40 hover:border-cyan-400 text-cyan-200 flex flex-col items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-lg shadow-cyan-950/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.3)]"
               >
-                <span className="text-sm sm:text-base font-extrabold">4. Rất dễ</span>
-                <span className="text-xs text-emerald-300 font-mono">7 ngày</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-cyan-500/30 text-cyan-300 flex items-center justify-center text-xs font-mono font-bold">4</span>
+                  <span className="text-sm sm:text-base font-black">Rất dễ</span>
+                </div>
+                <span className="text-[11px] text-cyan-300 font-mono">7-14 ngày</span>
               </button>
             </div>
 

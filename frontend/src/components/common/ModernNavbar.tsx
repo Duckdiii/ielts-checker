@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  Layers,
+  Sparkles,
+  Command,
+  Search,
   BookOpen,
   Mic,
   BarChart3,
-  Search,
-  Sparkles,
-  ChevronDown,
-  UploadCloud,
-  FileSpreadsheet,
-  Plus,
-  User,
+  Layers,
   Flame,
-  CheckCircle2,
-  FolderOpen,
+  ChevronDown,
+  Upload,
+  PlusCircle,
+  FileSpreadsheet,
+  Zap,
+  Check,
+  User,
+  ShieldCheck,
 } from 'lucide-react';
-import { WordSet, UserProgress, UserProfile, VocabItem } from '../../types';
 import { AppViewTab } from '../../hooks/useHashNavigation';
+import { WordSet, UserProgress, UserProfile, VocabItem } from '../../types';
 import { SyncStatusIndicator } from './SyncStatusIndicator';
 
 interface ModernNavbarProps {
@@ -24,7 +26,7 @@ interface ModernNavbarProps {
   onNavigate: (view: AppViewTab) => void;
   sets: WordSet[];
   activeSetId: string;
-  onSelectSet: (id: string) => void;
+  onSelectSet: (setId: string) => void;
   onOpenUpload: () => void;
   onOpenBatchImport: () => void;
   onOpenExcelImport: () => void;
@@ -63,14 +65,24 @@ export function ModernNavbar({
   onDataSynced,
 }: ModernNavbarProps) {
   const [isSetDropdownOpen, setIsSetDropdownOpen] = useState(false);
-  const [isCreateDropdownOpen, setIsCreateDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsSetDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const isAllLibrary = activeSetId === 'all-words-library' || activeSetId === 'all-words';
   const activeSet = isAllLibrary
     ? { title: 'Toàn bộ kho từ', totalWords: totalWordsCount }
     : sets.find((s) => s.id === activeSetId) || sets[0] || { title: 'Bộ từ vựng', totalWords: totalWordsCount };
 
-  // Check which of the 4 core pillars is currently active
+  // Active space indicators
   const isStudioActive = currentView === 'dashboard';
   const isVocabLabActive = [
     'vocab-hub',
@@ -101,43 +113,46 @@ export function ModernNavbar({
   ].includes(currentView);
   const isAnalyticsActive = ['progress', 'weakness-radar'].includes(currentView);
 
+  const streakDays = progress.currentStreakDays || 1;
+  const isGuest = !userProfile.email || userProfile.email === 'guest@ieltsmaster.ai';
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/10 glass-panel bg-[#090A0F]/80 backdrop-blur-xl">
-      <div className="max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 w-full px-3 sm:px-6 lg:px-10 pt-3.5 pb-2">
+      <div className="max-w-[1720px] mx-auto neo-glass-panel rounded-2xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4 border border-white/[0.12] shadow-[0_15px_35px_rgba(0,0,0,0.6)]">
         {/* Left: Brand Logo & 4 Navigation Pillars */}
-        <div className="flex items-center gap-6 lg:gap-8">
-          {/* Logo */}
+        <div className="flex items-center gap-5 lg:gap-7">
+          {/* Brand Logo */}
           <button
             onClick={() => onNavigate('dashboard')}
-            className="flex items-center gap-2.5 group cursor-pointer text-left focus:outline-none"
+            className="flex items-center gap-3 group cursor-pointer text-left focus:outline-none shrink-0"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-500 p-0.5 shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-all duration-300">
-              <div className="w-full h-full bg-[#090A0F] rounded-[10px] flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-indigo-400 group-hover:scale-110 transition-transform duration-300" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/50 transition-all duration-300">
+              <div className="w-full h-full bg-[#070913] rounded-[14px] flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-indigo-400 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="text-sm font-black tracking-tight flex items-center gap-1.5">
+              <div className="text-sm font-black tracking-tight flex items-center gap-1.5 font-sans">
                 <span className="text-white">IELTS</span>
-                <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent font-extrabold">
                   VocabMaster
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase">
-                  AI 2.0
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500/30 to-purple-500/30 text-indigo-300 border border-indigo-500/40 uppercase tracking-widest">
+                  2.0
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 font-medium">Cambridge Academic Suite</p>
             </div>
           </button>
 
-          {/* 4 Core Space Tabs (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-xl border border-white/10">
+          {/* 4 Navigation Pillars */}
+          <nav className="hidden md:flex items-center gap-1.5 bg-white/[0.04] p-1.5 rounded-xl border border-white/[0.08]">
             <button
               onClick={() => onNavigate('dashboard')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 isStudioActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/40 border border-indigo-400/30'
+                  : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -146,10 +161,10 @@ export function ModernNavbar({
 
             <button
               onClick={() => onNavigate('vocab-hub')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 isVocabLabActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/40 border border-indigo-400/30'
+                  : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -158,10 +173,10 @@ export function ModernNavbar({
 
             <button
               onClick={() => onNavigate('speaking-hub')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 isSpeakingActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-md shadow-rose-600/40 border border-rose-400/30'
+                  : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <Mic className="w-3.5 h-3.5" />
@@ -170,10 +185,10 @@ export function ModernNavbar({
 
             <button
               onClick={() => onNavigate('progress')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 isAnalyticsActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/40 border border-indigo-400/30'
+                  : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
@@ -182,173 +197,132 @@ export function ModernNavbar({
           </nav>
         </div>
 
-        {/* Center: Command Palette Trigger Button (Ctrl+K) */}
-        <div className="flex-1 max-w-md hidden lg:block mx-4">
-          <button
-            onClick={onOpenCommandPalette}
-            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-indigo-500/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer group shadow-sm"
-          >
-            <div className="flex items-center gap-2.5 text-xs font-medium">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
-              <span>Tìm từ vựng, chủ đề IELTS, chức năng...</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-400">
-                ⌘K
-              </kbd>
-            </div>
-          </button>
-        </div>
-
-        {/* Right: Active Set Switcher, Add Word / PDF Dropdown, User Profile & Band Badge */}
+        {/* Center/Right: Universal Command Palette (⌘K) & Active Set */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Mobile Search Button */}
+          {/* Universal Search Command Bar (Ctrl+K) */}
           <button
             onClick={onOpenCommandPalette}
-            className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white lg:hidden cursor-pointer"
-            title="Tìm kiếm vạn năng (Ctrl+K)"
+            className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-indigo-500/40 text-slate-300 hover:text-white transition-all text-xs font-medium cursor-pointer shadow-inner group"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+            <span className="hidden xl:inline text-slate-400 font-medium">Tìm từ vựng, mở chế độ thi...</span>
+            <span className="xl:hidden text-slate-400 font-medium">Tìm nhanh</span>
+            <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/10 text-[10px] font-mono text-indigo-300 font-bold">
+              <Command className="w-2.5 h-2.5" /> K
+            </kbd>
           </button>
 
-          {/* Active Word Set Switcher Dropdown */}
-          <div className="relative">
+          {/* Active Set Selector Dropdown */}
+          <div className="relative hidden lg:block" ref={dropdownRef}>
             <button
-              onClick={() => setIsSetDropdownOpen(!isSetDropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-white/20 text-slate-200 transition-all cursor-pointer"
+              onClick={() => setIsSetDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-bold text-slate-200 transition-all cursor-pointer"
             >
-              <FolderOpen className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-              <div className="text-left hidden sm:block max-w-[130px] truncate">
-                <div className="text-xs font-semibold text-white truncate">{activeSet.title}</div>
-                <div className="text-[10px] text-slate-400">{activeSet.totalWords} từ</div>
-              </div>
-              <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="max-w-[140px] truncate">{activeSet.title}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isSetDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isSetDropdownOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setIsSetDropdownOpen(false)} />
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#121420] border border-white/15 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1.5">
-                    Chọn Bộ Từ Vựng
-                  </div>
-                  <div className="max-h-60 overflow-y-auto space-y-1">
+              <div className="absolute right-0 mt-2 w-72 neo-glass-panel rounded-2xl border border-white/10 p-2 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-white/5">
+                  Bộ Từ Vựng Đang Chọn
+                </div>
+                <div className="max-h-60 overflow-y-auto py-1 space-y-0.5">
+                  <button
+                    onClick={() => {
+                      onSelectSet('all-words-library');
+                      setIsSetDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-left transition-colors cursor-pointer ${
+                      isAllLibrary ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-white/5'
+                    }`}
+                  >
+                    <span className="truncate">Toàn Bộ Kho Từ</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/5">{totalWordsCount} từ</span>
+                  </button>
+
+                  {sets.map((set) => (
                     <button
+                      key={set.id}
                       onClick={() => {
-                        onSelectSet('all-words-library');
+                        onSelectSet(set.id);
                         setIsSetDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-semibold transition-all cursor-pointer ${
-                        isAllLibrary
-                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                          : 'text-slate-300 hover:bg-white/5'
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-left transition-colors cursor-pointer ${
+                        activeSetId === set.id ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-white/5'
                       }`}
                     >
-                      <span className="truncate">Toàn Bộ Kho Từ ({totalWordsCount})</span>
-                      {isAllLibrary && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />}
+                      <span className="truncate">{set.title}</span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/5">{set.totalWords} từ</span>
                     </button>
-                    {sets.map((set) => (
-                      <button
-                        key={set.id}
-                        onClick={() => {
-                          onSelectSet(set.id);
-                          setIsSetDropdownOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-medium transition-all cursor-pointer ${
-                          activeSetId === set.id
-                            ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 font-semibold'
-                            : 'text-slate-300 hover:bg-white/5'
-                        }`}
-                      >
-                        <div className="truncate pr-2">
-                          <div className="truncate">{set.title}</div>
-                          <div className="text-[10px] text-slate-400">{set.totalWords} từ</div>
-                        </div>
-                        {activeSetId === set.id && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
-                      </button>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              </>
-            )}
-          </div>
 
-          {/* Quick Import / Create Button */}
-          <div className="relative">
-            <button
-              onClick={() => setIsCreateDropdownOpen(!isCreateDropdownOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Nạp từ</span>
-            </button>
-
-            {isCreateDropdownOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setIsCreateDropdownOpen(false)} />
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#121420] border border-white/15 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-1.5">
                   <button
                     onClick={() => {
-                      setIsCreateDropdownOpen(false);
+                      setIsSetDropdownOpen(false);
                       onOpenUpload();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-semibold text-slate-200 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-200 cursor-pointer"
                   >
-                    <UploadCloud className="w-4 h-4 text-indigo-400" />
-                    <span>Nạp PDF bằng AI</span>
+                    <Upload className="w-3 h-3 text-indigo-400" />
+                    <span>Nạp PDF AI</span>
                   </button>
                   <button
                     onClick={() => {
-                      setIsCreateDropdownOpen(false);
+                      setIsSetDropdownOpen(false);
                       onOpenExcelImport();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-semibold text-slate-200 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-200 cursor-pointer"
                   >
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                    <span>Nhập file Excel / CSV</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsCreateDropdownOpen(false);
-                      onOpenAddWord();
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-semibold text-slate-200 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4 text-amber-400" />
-                    <span>Thêm từ thủ công</span>
+                    <FileSpreadsheet className="w-3 h-3 text-emerald-400" />
+                    <span>Nhập Excel</span>
                   </button>
                 </div>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Sync Status Indicator */}
-          <div className="hidden sm:block">
-            <SyncStatusIndicator
-              getWords={getWords}
-              getSets={getSets}
-              getProgress={getProgress}
-              onDataSynced={onDataSynced}
-            />
+          {/* Streak Flame Badge */}
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-extrabold shadow-sm" title={`Chuỗi học tập ${streakDays} ngày`}>
+            <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+            <span>{streakDays}d</span>
           </div>
 
-          {/* User Profile & IELTS Band Score Pill */}
-          <button
-            onClick={userProfile.uid === 'guest' ? onOpenAuth : onOpenProfile}
-            className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1 rounded-xl bg-white/[0.04] border border-white/10 hover:border-white/20 transition-all cursor-pointer group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 p-0.5 flex items-center justify-center text-white text-xs font-bold shrink-0">
-              {userProfile.displayName ? userProfile.displayName.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 text-left">
-              <span className="text-xs font-bold text-slate-200 group-hover:text-white truncate max-w-[90px]">
-                {userProfile.displayName || 'IELTS Scholar'}
+          {/* Sync Status */}
+          <SyncStatusIndicator
+            userId={userProfile.uid}
+            isGuest={isGuest}
+            getWords={getWords}
+            getSets={getSets}
+            getProgress={getProgress}
+            onDataSynced={onDataSynced}
+          />
+
+          {/* User Profile Avatar / Sign In */}
+          {isGuest ? (
+            <button
+              onClick={onOpenAuth}
+              className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Đăng nhập</span>
+            </button>
+          ) : (
+            <button
+              onClick={onOpenProfile}
+              className="flex items-center gap-2 p-1 pl-2 pr-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all cursor-pointer group"
+            >
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-105 transition-transform">
+                {userProfile.displayName ? userProfile.displayName.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <span className="hidden sm:inline text-xs font-bold text-slate-200 max-w-[90px] truncate">
+                {userProfile.displayName}
               </span>
-              <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                Band {progress.estimatedBand || '6.5'}
-              </span>
-            </div>
-          </button>
+            </button>
+          )}
         </div>
       </div>
     </header>
